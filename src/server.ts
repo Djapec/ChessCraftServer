@@ -22,8 +22,14 @@ const schemas = getSchemas(mg);
 
 const db = new Database(mg, schemas);
 
+const corsConfig = {
+    origin: '*',
+    methods: ['GET', 'OPTIONS'],
+    optionsSuccessStatus: 200,
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsConfig));
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
