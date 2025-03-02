@@ -5,7 +5,6 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import config from './config/config.js';
 import { getDatabase } from './config/database.config.js';
-
 import {Database} from "./database/database.js";
 import {getSchemas} from "./schemas/index.js";
 import {createTestRoutes} from "./routes/test.route.js";

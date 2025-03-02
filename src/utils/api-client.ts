@@ -19,4 +19,15 @@ async function fetchApiData<T = any>(url: string): Promise<T> {
     }
 }
 
-export { fetchApiData };
+function sendResponse(response: any, result: any) {
+    const error = result.code < 200 || result.code >= 300;
+
+    response.status(result.code).json({
+        message: result.message,
+        data: result.data,
+        code: result.code,
+        error,
+    });
+}
+
+export { fetchApiData, sendResponse };

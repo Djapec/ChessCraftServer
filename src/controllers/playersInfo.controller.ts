@@ -1,7 +1,7 @@
 import {Database} from "../database/database.js";
 import {PlayersInfoService} from "../services/playersInfo.service.js";
 import {ChessFileRequest} from "../Interfaces/Interfaces.js";
-import express from "express";
+import {sendResponse} from "../utils/api-client.js";
 
 export class PlayersInfoController {
     private db: Database;
@@ -25,15 +25,4 @@ export class PlayersInfoController {
             });
         }
     }
-}
-
-function sendResponse(response: any, result: any) {
-    const error = result.code < 200 || result.code >= 300;
-
-    response.status(result.code).json({
-        msg: result.message,
-        data: result.data,
-        code: result.code,
-        error,
-    });
 }

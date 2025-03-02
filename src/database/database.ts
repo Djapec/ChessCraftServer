@@ -67,7 +67,6 @@ export class Database implements IDatabase {
         );
     }
 
-// Full example for findByIdAndDelete
     async findByIdAndDelete({ collection, id }: db_function): Promise<any> {
         return this.schemas[collection].deleteOne(
             { _id: typeof id === 'number' ? ObjectId.createFromTime(id) : new ObjectId(id) }
