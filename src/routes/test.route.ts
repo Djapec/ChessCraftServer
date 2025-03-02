@@ -1,5 +1,5 @@
 import express from 'express';
-import {TestController} from '../controllers/testController.js';
+import {TestController} from '../controllers/test.controller.js';
 import {Database} from "../database/database.js";
 
 export function createTestRoutes(db: Database) {

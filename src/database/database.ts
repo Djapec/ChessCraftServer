@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {db_function, IDatabase, Schema} from "./databaseInterfaces.js";
+import {db_function, IDatabase, Schema} from "./database.interfaces.js";
 
 
 const ObjectId = mongoose.Types.ObjectId;
