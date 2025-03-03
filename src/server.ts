@@ -8,7 +8,7 @@ import { getDatabase } from './config/database.config.js';
 import {Database} from "./database/database.js";
 import {getSchemas} from "./schemas/index.js";
 import {createTestRoutes} from "./routes/test.route.js";
-import {createChessRoutes} from "./routes/playersInfo.route.js";
+import {createTournamentRoutes} from "./routes/tournament.route.js";
 
 // Load environment variables
 dotenv.config();
@@ -36,9 +36,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // API routes
 const testRoutes = createTestRoutes(db);
-const playersInfo = createChessRoutes(db)
+const tournamentRoutes = createTournamentRoutes(db)
 app.use('/api/test', testRoutes);
-app.use('/process-chess-data', playersInfo);
+app.use('/process-chess-data', tournamentRoutes);
 
 app.use((req: Request, res: Response) => {
     res.status(404).json({ message: 'Route not found' });

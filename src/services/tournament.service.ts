@@ -1,6 +1,7 @@
 import {Database} from "../database/database.js";
 import * as XLSX from "xlsx";
 import {ChessFileRequest, Result} from "../Interfaces/Interfaces.js";
+import {TournamentRepository} from "../repositories/tournament.repository.js";
 
 interface ChessPlayer {
     name: string;
@@ -10,14 +11,23 @@ interface ChessPlayer {
     rating: number | null;
 }
 
-export class PlayersInfoService {
+export interface Tournament {
+    liveChessCloudId: string,
+    chessResultId: string,
+    name: string,
+    players: ChessPlayer[],
+}
+
+export class TournamentService {
     private db: Database;
+    private tournamentRepository: TournamentRepository
 
     constructor(db: Database) {
         this.db = db;
+        this.tournamentRepository = new TournamentRepository(db)
     }
 
-    async savePlayersInfo(request: ChessFileRequest): Promise<Result> {
+    async saveTournament(request: ChessFileRequest): Promise<Result> {
         if (!request.file) {
             return {
                 code: 400,
@@ -56,9 +66,18 @@ export class PlayersInfoService {
 
         const players = this.extractPlayersFromSheet(sheet);
 
+        const tournament = {
+            liveChessCloudId: liveChessCloudId,
+            chessResultId: chessResultId,
+            name: tournamentName,
+            players: players,
+        } as Tournament;
+
+        await this.tournamentRepository.saveTournament(tournament);
+
         return {
             code: 200,
-            message: 'Players info saved successfully.',
+            message: 'Tournament saved successfully.',
             data: {
                 liveChessCloudId: liveChessCloudId,
                 chessResultId: chessResultId,
@@ -68,7 +87,6 @@ export class PlayersInfoService {
             }
         }
     }
-
 
     private validateXlsxFile(file: Express.Multer.File): void {
         if (!file.buffer) {

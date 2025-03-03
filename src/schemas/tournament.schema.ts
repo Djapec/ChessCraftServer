@@ -9,7 +9,8 @@ const PlayerSchema = new mongoose.Schema({
 }, { _id: false }); // Disables automatic _id for players
 
 const TournamentSchema = new mongoose.Schema({
-    tournamentId: { type: String, required: true, unique: true },
+    chessResultId: { type: String, required: true, unique: true },
+    liveChessCloudId: { type: String, required: true },
     name: { type: String, required: true },
     players: { type: [PlayerSchema], default: [] } // Array of player objects without _id
 });
