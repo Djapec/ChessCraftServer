@@ -60,3 +60,9 @@ export interface Tournament {
     name: string,
     players: ChessPlayer[],
 }
+
+export interface ProxyQueryParams {
+    id?: string;
+    round?: string;
+    game?: string;
+}

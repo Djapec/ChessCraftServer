@@ -2,12 +2,7 @@ import {Request, Response} from 'express';
 import {sendResponse} from '../utils/api-client.js';
 import {ProxyService} from "../services/proxy.service.js";
 import {Database} from "../database/database.js";
-
-interface ProxyQueryParams {
-    id?: string;
-    round?: string;
-    game?: string;
-}
+import {ProxyQueryParams} from "../Interfaces/Interfaces.js";
 
 export class ProxyController {
     private db: Database;

@@ -10,6 +10,7 @@ import {getSchemas} from "./schemas/index.js";
 import {createTestRoutes} from "./routes/test.route.js";
 import {createTournamentRoutes} from "./routes/tournament.route.js";
 import { createProxyRoutes } from './routes/proxy.route.js';
+import {createGameRoutes} from "./routes/game.route.js";
 
 dotenv.config();
 
@@ -36,11 +37,12 @@ app.use(express.urlencoded({ extended: true }));
 const testRoutes = createTestRoutes(db);
 const tournamentRoutes = createTournamentRoutes(db);
 const proxyRoutes = createProxyRoutes(db);
-
+const gameRoutes = createGameRoutes(db);
 // API routes
 app.use('/api/test', testRoutes);
 app.use('/api/process-chess-data', tournamentRoutes);
 app.use('/api/proxy', proxyRoutes);
+app.use('/api/proxy/game', gameRoutes);
 
 app.use((req: Request, res: Response) => {
     res.status(404).json({ message: 'Route not found' });
