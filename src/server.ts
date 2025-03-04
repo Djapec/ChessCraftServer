@@ -35,7 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 // API controllers
 const testRoutes = createTestRoutes(db);
 const tournamentRoutes = createTournamentRoutes(db);
-const proxyRoutes = createProxyRoutes();
+const proxyRoutes = createProxyRoutes(db);
 
 // API routes
 app.use('/api/test', testRoutes);

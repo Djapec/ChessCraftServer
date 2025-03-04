@@ -1,22 +1,7 @@
 import {Database} from "../database/database.js";
 import * as XLSX from "xlsx";
-import {ChessFileRequest, Result} from "../Interfaces/Interfaces.js";
+import {ChessFileRequest, ChessPlayer, Result, Tournament} from "../Interfaces/Interfaces.js";
 import {TournamentRepository} from "../repositories/tournament.repository.js";
-
-interface ChessPlayer {
-    name: string;
-    title: string | null;
-    fideId: number | null;
-    federation: string | null;
-    rating: number | null;
-}
-
-export interface Tournament {
-    liveChessCloudId: string,
-    chessResultId: string,
-    name: string,
-    players: ChessPlayer[],
-}
 
 export class TournamentService {
     private db: Database;

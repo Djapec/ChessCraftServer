@@ -1,6 +1,7 @@
 import {Request, Response} from 'express';
 import {sendResponse} from '../utils/api-client.js';
 import {ProxyService} from "../services/proxy.service.js";
+import {Database} from "../database/database.js";
 
 interface ProxyQueryParams {
     id?: string;
@@ -9,7 +10,13 @@ interface ProxyQueryParams {
 }
 
 export class ProxyController {
-    private proxyService: ProxyService = new ProxyService();
+    private db: Database;
+    private proxyService: ProxyService;
+
+    constructor(db: Database) {
+        this.db = db;
+        this.proxyService = new ProxyService(db);
+    }
 
     proxyHandler = async (
         request: Request<{}, {}, {}, ProxyQueryParams>,
