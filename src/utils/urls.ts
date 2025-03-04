@@ -12,12 +12,16 @@ function getGameUrl(id: string, round: number, game: number): string {
 
 /**
  * Constructs the API URL based on the parameters.
+ * @param tournamentId The ID of the tournament
+ * @param round Optional round number
+ * @param game Optional game number
+ * @returns The constructed API URL
  */
-function constructApiUrl(tournamentId: string, round?: number, game?: number): string {
+function constructApiUrl(tournamentId: string, round?: string, game?: string): string {
     if (round !== undefined && game !== undefined) {
-        return getGameUrl(tournamentId, round, game);
+        return getGameUrl(tournamentId, parseInt(round), parseInt(game));
     } else if (round !== undefined) {
-        return getRoundUrl(tournamentId, round);
+        return getRoundUrl(tournamentId, parseInt(round));
     } else {
         return getTourneyUrl(tournamentId);
     }

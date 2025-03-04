@@ -9,18 +9,16 @@ import {Database} from "./database/database.js";
 import {getSchemas} from "./schemas/index.js";
 import {createTestRoutes} from "./routes/test.route.js";
 import {createTournamentRoutes} from "./routes/tournament.route.js";
+import { createProxyRoutes } from './routes/proxy.route.js';
 
-// Load environment variables
 dotenv.config();
 
-// Initialize express app
 const app: Application = express();
 
-// Now you can use top-level await
-const mg = await getDatabase(config.mongodbUri!);
-const schemas = getSchemas(mg);
-
-const db = new Database(mg, schemas);
+// Database
+const mongoDb = await getDatabase(config.mongodbUri!);
+const schemas = getSchemas(mongoDb);
+const db = new Database(mongoDb, schemas);
 
 const corsConfig = {
     origin: '*',
@@ -34,11 +32,15 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API routes
+// API controllers
 const testRoutes = createTestRoutes(db);
-const tournamentRoutes = createTournamentRoutes(db)
+const tournamentRoutes = createTournamentRoutes(db);
+const proxyRoutes = createProxyRoutes();
+
+// API routes
 app.use('/api/test', testRoutes);
-app.use('/process-chess-data', tournamentRoutes);
+app.use('/api/process-chess-data', tournamentRoutes);
+app.use('/api/proxy', proxyRoutes);
 
 app.use((req: Request, res: Response) => {
     res.status(404).json({ message: 'Route not found' });

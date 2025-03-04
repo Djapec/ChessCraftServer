@@ -1,5 +1,6 @@
 import {Database} from "../database/database.js";
-import {Tournament} from "../services/playersInfo.service.js";
+import {Tournament} from "../services/tournament.service.js";
+
 
 export class TournamentRepository {
     private db: Database;
