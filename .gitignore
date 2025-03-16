@@ -58,3 +58,4 @@ nbproject/
 *.pem
 *.cert
 *.key
+node_modules
