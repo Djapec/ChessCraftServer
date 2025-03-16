@@ -1,17 +1,21 @@
-import {Result} from "../Interfaces/Interfaces.js";
+import {Pairing, Result} from "../Interfaces/Interfaces.js";
 import {decodeTournamentId, encryptData} from "../utils/crypto.js";
 import {getGameUrl, getRoundUrl, getTourneyUrl} from "../utils/urls.js";
 import {enrichPairings} from "../utils/enrichPairings.js";
 import {Database} from "../database/database.js";
 import {TournamentRepository} from "../repositories/tournament.repository.js";
+import {GameRepository} from "../repositories/game.repository.js";
 
 export class GameService {
     private db: Database;
     private tournamentRepository: TournamentRepository
+    private gameRepository: GameRepository
+    readonly DELAY_MS = 15 * 60 * 1000;
 
     constructor(db: Database) {
         this.db = db;
         this.tournamentRepository = new TournamentRepository(db)
+        this.gameRepository = new GameRepository(db)
     }
      parseGameInput = (gameInput: any) => {
         if (gameInput.includes(',')) {
@@ -20,6 +24,45 @@ export class GameService {
             return [parseInt(gameInput.trim(), 10)];
         }
     };
+
+    async saveDelayedResults(pairings: Array<Pairing>): Promise<Array<Pairing>> {
+        const delayedResults = await this.gameRepository.getAllDelayedResults();
+        for (const pairing of pairings) {
+            if (pairing.result !== '*') {
+                if (delayedResults.length === 0) { // initial addition
+                    await this.gameRepository.saveDelayedGameResultUpsert({
+                        result: pairing.result,
+                        whitePlayerId: pairing.white.fideid,
+                        gameCompletedAt: Date.now(),
+                    });
+                } else {
+                    for (const delayedResult of delayedResults) {
+                        if (delayedResult.whitePlayerId !== pairing.white.fideid) { // add for the first time, if not found
+                            await this.gameRepository.saveDelayedGameResultUpsert({
+                                result: pairing.result,
+                                whitePlayerId: pairing.white.fideid,
+                                gameCompletedAt: Date.now(),
+                            });
+                            pairing.result = '*';
+                        } else if (delayedResult.gameCompletedAt < Date.now() - this.DELAY_MS) {
+                            // entry added and no longer needed, display the real result
+                        } else if (delayedResult.gameCompletedAt >= Date.now() - this.DELAY_MS) {
+                            // entry added, within the 15min delay period
+                            pairing.result = '*';
+                        }
+                    }
+                }
+            }
+        }
+
+        return pairings;
+    }
+
+    async cleanupExpiredDelays(now: number): Promise<void> {
+        const cutoffTime = now - this.DELAY_MS;
+
+        await this.gameRepository.deleteExpiredDelayedResults(cutoffTime);
+    }
 
      async fetchGame(encodedId: string, round: string, game: string): Promise<Result> {
          const tournamentId = decodeTournamentId(encodedId);
@@ -32,7 +75,9 @@ export class GameService {
              const pairsData = await fetchPairsData(tournamentId, [roundNumber]);
 
              const tournamentInfo = await this.tournamentRepository.findTournamentByLiveChessCloudId(tournamentId)
-             pairsData[0].pairings = enrichPairings(pairsData[0].pairings, tournamentInfo.players)
+             if (tournamentInfo?.players) {
+                 pairsData[0].pairings = enrichPairings(pairsData[0].pairings, tournamentInfo.players)
+             }
 
              const extendedGamesUrls = getGamesUrls(tournamentId, [round], pairsData, desiredPairs);
 
