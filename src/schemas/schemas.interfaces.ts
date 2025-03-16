@@ -20,4 +20,13 @@ interface ITournament extends Document {
     players: IPlayer[];
 }
 
-export { IPlayer, ITournament };
+/**
+ * Interface for the Tournament schema.
+ */
+interface IDelayedResult extends Document {
+    whitePlayerId: number;
+    result: string;
+    gameCompletedAt: number;
+}
+
+export { IPlayer, ITournament, IDelayedResult };

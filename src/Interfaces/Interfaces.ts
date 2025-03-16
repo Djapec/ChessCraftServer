@@ -61,6 +61,12 @@ export interface Tournament {
     players: ChessPlayer[],
 }
 
+export interface DelayedResult {
+    whitePlayerId: number,
+    result: string,
+    gameCompletedAt: number,
+}
+
 export interface ProxyQueryParams {
     id?: string;
     round?: string;
