@@ -9,33 +9,37 @@ export class GameRepository {
         this.db = db;
     }
 
-    async saveDelayedGameResultUpsert(delayedResult: DelayedResult){
-        return this.db.findOneAndUpdate({
-                collection: 'DelayedResult',
-                query: { whitePlayerId: delayedResult.whitePlayerId },
-                update: {
-                    whitePlayerId: delayedResult.whitePlayerId,
-                    result: delayedResult.result,
-                    gameCompletedAt: delayedResult.gameCompletedAt,
-                },
-                options: { upsert: true, new: true },
-            },
-        );
-    }
-
-    async getAllDelayedResults(): Promise<DelayedResult[]> {
+    async getDelayedResults(fifteenMinutesAgo: number): Promise<DelayedResult[]>{
         return await this.db.find({
             collection: 'DelayedResult',
+            query: { gameCompletedAt: { $lt: fifteenMinutesAgo } },
             project: {
                 whitePlayerId: 1,
             }
         });
     }
 
-    async deleteExpiredDelayedResults(cutoffTime: number): Promise<DelayedResult[]> {
-        return await this.db.deleteMany({
+    async bulkInsertDelayedResults(records: DelayedResult[]): Promise<DelayedResult[]> {
+        const whitePlayerIds = records.map(record => record.whitePlayerId);
+
+        const existingRecords = await this.db.find({
             collection: 'DelayedResult',
-            query: { gameCompletedAt: { $lt: cutoffTime } }
+            query: { whitePlayerId: { $in: whitePlayerIds } },
+            project: {
+                whitePlayerId: 1,
+            }
         });
+
+        const existingPlayerIds = new Set(existingRecords.map((record: { whitePlayerId: any; }) => record.whitePlayerId));
+        const recordsToInsert = records.filter(record => !existingPlayerIds.has(record.whitePlayerId));
+
+        if (recordsToInsert.length > 0) {
+            await this.db.insertMany({
+                collection: 'DelayedResult',
+                documents: recordsToInsert
+            });
+            return recordsToInsert;
+        }
+        return [];
     }
 }
