@@ -1,4 +1,4 @@
-import {Pairing, Result} from "../Interfaces/Interfaces.js";
+import {DelayedResult, Pairing, Result} from "../Interfaces/Interfaces.js";
 import {decodeTournamentId, encryptData} from "../utils/crypto.js";
 import {enrichPairings} from "../utils/enrichPairings.js";
 import {Database} from "../database/database.js";
@@ -34,18 +34,22 @@ export class GameService {
 
     async processDelayedResults(pairings: Pairing[]): Promise<Pairing[]> {
         const fifteenMinutesAgo = Date.now() - this.DELAY_MS;
+
         const existingDelayedResults = await this.gameRepository.getDelayedResults(fifteenMinutesAgo);
         if (existingDelayedResults.length === 0) {
+            await this.insertDelayedResults(pairings, [])
             return resetAllPairingsResults(pairings)
         }
 
         const excludedPairings = existingDelayedResults.map(result => result.whitePlayerId)
-        const paringsForInsert = filterChessPairings(pairings, excludedPairings)
-        const delayedResults = mapChessPairingsToDelayedResults(paringsForInsert)
-
-        const insertedDelayedResults = await this.gameRepository.bulkInsertDelayedResults(delayedResults)
-
+        const insertedDelayedResults = await this.insertDelayedResults(pairings, excludedPairings)
         return updateChessPairingsWithResults(pairings, insertedDelayedResults)
+    }
+
+    async insertDelayedResults(pairings: Pairing[],  excludeFideIds: number[]): Promise<DelayedResult[]> {
+        const paringsForInsert = filterChessPairings(pairings, excludeFideIds)
+        const delayedResults = mapChessPairingsToDelayedResults(paringsForInsert)
+        return await this.gameRepository.bulkInsertDelayedResults(delayedResults)
     }
 
      async fetchGame(encodedId: string, round: string, game: string): Promise<Result> {
