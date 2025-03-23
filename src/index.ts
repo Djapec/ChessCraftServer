@@ -1,11 +1,12 @@
 import app from './server.js';
 import dotenv from 'dotenv';
+import {midnightTruncateCron} from "./cron/midnightTruncateCron.js";
 
 // Load environment variables
 dotenv.config();
 
 // Set port
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3333;
 
 // Start server
 const server = app.listen(PORT, () => {

@@ -11,6 +11,7 @@ import {createTestRoutes} from "./routes/test.route.js";
 import {createTournamentRoutes} from "./routes/tournament.route.js";
 import { createProxyRoutes } from './routes/proxy.route.js';
 import {createGameRoutes} from "./routes/game.route.js";
+import {midnightTruncateCron} from "./cron/midnightTruncateCron.js";
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ const app: Application = express();
 const mongoDb = await getDatabase(config.mongodbUri!);
 const schemas = getSchemas(mongoDb);
 const db = new Database(mongoDb, schemas);
+
+midnightTruncateCron(db);
 
 const corsConfig = {
     origin: '*',
