@@ -41,6 +41,7 @@ const testRoutes = createTestRoutes(db);
 const tournamentRoutes = createTournamentRoutes(db);
 const proxyRoutes = createProxyRoutes(db);
 const gameRoutes = createGameRoutes(db);
+
 // API routes
 app.use('/api/test', testRoutes);
 app.use('/api/process-chess-data', tournamentRoutes);

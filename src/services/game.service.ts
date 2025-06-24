@@ -49,7 +49,8 @@ export class GameService {
     async insertDelayedResults(pairings: Pairing[],  excludeFideIds: number[]): Promise<DelayedResult[]> {
         const paringsForInsert = filterChessPairings(pairings, excludeFideIds)
         const delayedResults = mapChessPairingsToDelayedResults(paringsForInsert)
-        return await this.gameRepository.bulkInsertDelayedResults(delayedResults)
+        await this.gameRepository.bulkInsertDelayedResults(delayedResults)
+        return delayedResults
     }
 
      async fetchGame(encodedId: string, round: string, game: string): Promise<Result> {

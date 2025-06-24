@@ -19,6 +19,7 @@ export class ProxyService {
         this.gameService = new GameService(db);
     }
 
+    //todo: handle timezone uvek mora biti ista vremenska zona
     async proxyHandler(encodedId?: string, round?: string, game?: string): Promise<Result> {
         if (!encodedId) {
             return {

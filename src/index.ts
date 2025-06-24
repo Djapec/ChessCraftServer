@@ -1,6 +1,5 @@
 import app from './server.js';
 import dotenv from 'dotenv';
-import {midnightTruncateCron} from "./cron/midnightTruncateCron.js";
 
 // Load environment variables
 dotenv.config();
