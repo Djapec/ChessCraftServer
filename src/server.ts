@@ -12,6 +12,7 @@ import {createTournamentRoutes} from "./routes/tournament.route.js";
 import { createProxyRoutes } from './routes/proxy.route.js';
 import {createGameRoutes} from "./routes/game.route.js";
 import {midnightTruncateCron} from "./cron/midnightTruncateCron.js";
+import {ResourceService} from "./services/resource.service.js";
 
 dotenv.config();
 
@@ -37,10 +38,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API controllers
+const resourceService = new ResourceService();
 const testRoutes = createTestRoutes(db);
 const tournamentRoutes = createTournamentRoutes(db);
-const proxyRoutes = createProxyRoutes(db);
-const gameRoutes = createGameRoutes(db);
+const proxyRoutes = createProxyRoutes(db, resourceService);
+const gameRoutes = createGameRoutes(db, resourceService);
 
 // API routes
 app.use('/api/test', testRoutes);
