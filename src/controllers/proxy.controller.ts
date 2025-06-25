@@ -3,14 +3,17 @@ import {sendResponse} from '../utils/api-client.js';
 import {ProxyService} from "../services/proxy.service.js";
 import {Database} from "../database/database.js";
 import {ProxyQueryParams} from "../Interfaces/Interfaces.js";
+import {ResourceService} from "../services/resource.service.js";
 
 export class ProxyController {
     private db: Database;
     private proxyService: ProxyService;
+    private resourceService: ResourceService;
 
-    constructor(db: Database) {
+    constructor(db: Database, resourceService: ResourceService) {
         this.db = db;
         this.proxyService = new ProxyService(db);
+        this.resourceService = resourceService;
     }
 
     proxyHandler = async (
@@ -19,7 +22,12 @@ export class ProxyController {
     ) => {
         try {
             const { id: encodedId, round, game } = request.query;
-            const result = await this.proxyService.proxyHandler(encodedId, round, game);
+            const resourceKey = round != null
+                ? `proxy:${encodedId}:${round}${game != null ? `:${game}` : ''}`
+                : `proxy:${encodedId}`;
+            const result = await this.resourceService.getResource(resourceKey, async () => {
+                return await this.proxyService.proxyHandler(encodedId, round, game);
+            });
             sendResponse(response, result);
         } catch (error: any) {
             console.error('Error in proxy handler:', error.message);
