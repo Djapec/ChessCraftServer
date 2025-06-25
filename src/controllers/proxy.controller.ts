@@ -22,7 +22,9 @@ export class ProxyController {
     ) => {
         try {
             const { id: encodedId, round, game } = request.query;
-            const resourceKey = `proxy:${encodedId}:${round}:${game}`;
+            const resourceKey = round != null
+                ? `proxy:${encodedId}:${round}${game != null ? `:${game}` : ''}`
+                : `proxy:${encodedId}`;
             const result = await this.resourceService.getResource(resourceKey, async () => {
                 return await this.proxyService.proxyHandler(encodedId, round, game);
             });
