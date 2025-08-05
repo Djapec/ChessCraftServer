@@ -13,8 +13,8 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM base AS production
-ENV NODE_ENV=production
+FROM base AS development
+ENV NODE_ENV=development
 
 # Copy production dependencies and build output
 COPY package*.json ./

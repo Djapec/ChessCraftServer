@@ -27,6 +27,7 @@ interface IDelayedResult extends Document {
     whitePlayerId: number;
     result: string;
     gameCompletedAt: number;
+    gameCompletedAtFormatted: Date;
 }
 
 export { IPlayer, ITournament, IDelayedResult };

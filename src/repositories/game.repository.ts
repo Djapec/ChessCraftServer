@@ -33,10 +33,19 @@ export class GameRepository {
         const existingPlayerIds = new Set(existingRecords.map((record: { whitePlayerId: any; }) => record.whitePlayerId));
         const recordsToInsert = records.filter(record => !existingPlayerIds.has(record.whitePlayerId));
 
+        const formatToUTCOffset = (timestamp: number): string => {
+            return new Date(timestamp).toISOString();
+        };
+
+        const formattedGames = recordsToInsert.map(game => ({
+            ...game,
+            gameCompletedAtFormatted: formatToUTCOffset(game.gameCompletedAt)
+        }));
+
         if (recordsToInsert.length > 0) {
             await this.db.insertMany({
                 collection: 'DelayedResult',
-                documents: recordsToInsert
+                documents: formattedGames
             });
             return recordsToInsert;
         }
