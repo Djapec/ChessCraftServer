@@ -86,12 +86,12 @@ export class GameService {
                  lookupMap
              }
 
-             const encryptedData = encryptData(result);
+             //const encryptedData = encryptData(result);
 
              return {
                  code: 200,
                  message: 'Data fetched successfully.',
-                 data: encryptedData
+                 data: result
              };
 
          } catch (error: any) {

@@ -1,5 +1,6 @@
 import { Database } from "../database/database.js";
 import { Request } from 'express';
+import { SocketService } from '../socket/socket.service.js';
 
 export class TestController {
     private db: Database;
@@ -13,6 +14,20 @@ export class TestController {
             res.status(200).json('This is test');
         } catch (error) {
             console.error('Error fetching tests:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
+
+    testSocket = async (req: Request, res: any) => {
+        try {
+            SocketService.getInstance().notify({
+                message: 'Hello from server!',
+                data: { timestamp: new Date().toISOString() }
+            });
+
+            res.status(200).json({ message: 'Event emitted successfully' });
+        } catch (error) {
+            console.error('Error emitting socket event:', error);
             res.status(500).json({ message: 'Internal server error' });
         }
     };

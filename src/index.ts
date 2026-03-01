@@ -1,5 +1,7 @@
 import app from './server.js';
 import dotenv from 'dotenv';
+import http from 'http';
+import {SocketServer} from "./socket/socket.js";
 
 // Load environment variables
 dotenv.config();
@@ -7,8 +9,13 @@ dotenv.config();
 // Set port
 const PORT = process.env.PORT || 3333;
 
+const server = http.createServer(app);
+
+// Initialize Socket.io
+SocketServer.initialize(server);
+
 // Start server
-const server = app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
 

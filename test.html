@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.io Test</title>
+    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+</head>
+<body>
+<h1>Socket.io Test</h1>
+<p>Status: <span id="status">Disconnected</span></p>
+<p>Last event: <span id="event">None</span></p>
+
+<script>
+    const socket = io('http://localhost:3333');
+
+    socket.on('connect', () => {
+        document.getElementById('status').textContent = 'Connected - ' + socket.id;
+        console.log('Connected:', socket.id);
+    });
+
+    socket.on('disconnect', () => {
+        document.getElementById('status').textContent = 'Disconnected';
+        console.log('Disconnected');
+    });
+
+    socket.on('notification', (payload) => {
+        document.getElementById('event').textContent = JSON.stringify(payload);
+        console.log('Notification received:', payload);
+    });
+</script>
+</body>
+</html>

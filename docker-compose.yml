@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Express TypeScript application
   app:
     build:
       context: .
@@ -12,16 +11,17 @@ services:
       - "${PORT:-3333}:3333"
     volumes:
       - ./uploads:/app/uploads
-      # For development: mount source code to enable hot reloading
       - ./src:/app/src:ro
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - PORT=${PORT:-3333}
       - MONGO_URI=${MONGO_URI}
+#      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+#    depends_on:
+#      - redis
     networks:
       - chesscraft-network
 
-  # Development service for hot reloading (only in dev mode)
   dev:
     build:
       context: .
@@ -37,10 +37,27 @@ services:
       - NODE_ENV=development
       - PORT=${PORT:-3333}
       - MONGO_URI=${MONGO_URI}
+#      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+#    depends_on:
+#      - redis
     networks:
       - chesscraft-network
     profiles: ["dev"]
 
+#  redis:
+#    image: redis:7-alpine
+#    container_name: chesscraft-redis
+#    restart: unless-stopped
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - redis-data:/data
+#    networks:
+#      - chesscraft-network
+
 networks:
   chesscraft-network:
     driver: bridge
+#
+#volumes:
+#  redis-data:

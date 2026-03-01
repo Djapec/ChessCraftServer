@@ -52,12 +52,12 @@ export class ProxyService {
                 responseData.pairings = enrichPairings(responseData.pairings, tournament.players)
             }
         }
-        const encryptedData = encryptData(responseData);
+        //const encryptedData = encryptData(responseData);
 
         return {
             code: 200,
             message: 'Data fetched successfully.',
-            data: encryptedData
+            data: responseData
         };
     }
 }

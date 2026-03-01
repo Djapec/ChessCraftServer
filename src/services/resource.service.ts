@@ -46,9 +46,9 @@ export class ResourceService {
 
             // ATOMIC SET: Must happen immediately after creation
             this.inflightRequests.set(resourceKey, pending);
-            console.log(`🚀 Created new request for: ${resourceKey}`);
+            console.log(`Created new request for: ${resourceKey}`);
         } else {
-            console.log(`🔗 Joining existing request for: ${resourceKey}`);
+            console.log(`Joining existing request for: ${resourceKey}`);
         }
 
         try {
