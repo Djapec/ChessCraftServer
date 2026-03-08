@@ -5,15 +5,16 @@ import { ProxyQueryParams } from '../Interfaces/Interfaces.js';
 import { Database } from '../database/database.js';
 
 export class GameController {
-  private db: Database;
   private gameService: GameService;
 
   constructor(db: Database) {
-    this.db = db;
     this.gameService = new GameService(db);
   }
 
-  fetchGame = async (request: Request<{}, {}, {}, ProxyQueryParams>, response: Response) => {
+  fetchGame = async (
+    request: Request<object, object, object, ProxyQueryParams>,
+    response: Response,
+  ) => {
     try {
       const { id: encodedId, round, game } = request.query;
       if (!encodedId || !round || !game) {

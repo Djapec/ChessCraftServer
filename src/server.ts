@@ -37,7 +37,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API controllers
-const testRoutes = createTestRoutes(db);
+const testRoutes = createTestRoutes();
 const tournamentRoutes = createTournamentRoutes(db);
 const proxyRoutes = createProxyRoutes(db);
 const gameRoutes = createGameRoutes(db);

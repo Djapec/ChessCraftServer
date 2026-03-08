@@ -1,14 +1,8 @@
-import { Database } from '../database/database.js';
 import { Request } from 'express';
 import { SocketService } from '../socket/socket.service.js';
-import { PollingService } from '../services/pulling.service.js';
 
 export class TestController {
-  private db: Database;
-
-  constructor(db: Database) {
-    this.db = db;
-  }
+  constructor() {}
 
   getTest = async (req: Request, res: any) => {
     try {

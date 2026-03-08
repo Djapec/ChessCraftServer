@@ -4,11 +4,9 @@ import { ChessFileRequest } from '../Interfaces/Interfaces.js';
 import { sendResponse } from '../utils/api-client.js';
 
 export class TournamentController {
-  private db: Database;
   private tournamentService: TournamentService;
 
   constructor(db: Database) {
-    this.db = db;
     this.tournamentService = new TournamentService(db);
   }
 

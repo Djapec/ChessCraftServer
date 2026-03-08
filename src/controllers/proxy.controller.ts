@@ -5,15 +5,16 @@ import { Database } from '../database/database.js';
 import { ProxyQueryParams } from '../Interfaces/Interfaces.js';
 
 export class ProxyController {
-  private db: Database;
   private proxyService: ProxyService;
 
   constructor(db: Database) {
-    this.db = db;
     this.proxyService = new ProxyService(db);
   }
 
-  proxyHandler = async (request: Request<{}, {}, {}, ProxyQueryParams>, response: Response) => {
+  proxyHandler = async (
+    request: Request<object, object, object, ProxyQueryParams>,
+    response: Response,
+  ) => {
     try {
       const { id: encodedId, round, game } = request.query;
       const result = await this.proxyService.proxyHandler(encodedId, round, game);

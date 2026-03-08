@@ -7,6 +7,7 @@ import { SocketEvents } from '../socket/socket.events.js';
 import { IBoardMove, IGame } from '../schemas/schemas.interfaces.js';
 import { WatchedGameRepository } from '../repositories/watchedgame.repository.js';
 import { RoundRepository } from '../repositories/round.repository.js';
+import { gameResultMap } from '../utils/constants.js';
 
 interface GameState {
   moveCount: number;
@@ -113,11 +114,18 @@ export class GamePollingService {
       }
     }
 
-    if (gameEnded) {
-      //todo: mapiranje rezultata partije
+    if (gameEnded && boardData.result) {
       await this.watchedGameRepository.closeGame(boardData.serialNr, boardData.result);
-      await this.updatePairingResult(key, boardData.result);
-      console.log(`Game ${key} ended with result: ${boardData.result}`);
+      if (gameResultMap.has(boardData.result)) {
+        const result = gameResultMap.get(boardData.result);
+        if (result) await this.updatePairingResult(key, result);
+
+        console.log(`Game ${key} ended with result: ${boardData.result}`);
+      } else {
+        console.log(
+          `Not able to update pairings result for Game ${key} with result: ${boardData.result}`,
+        );
+      }
 
       if (emitToSocket) {
         SocketService.getInstance().emitToRoom(key, SocketEvents.GAME_UPDATED, {
