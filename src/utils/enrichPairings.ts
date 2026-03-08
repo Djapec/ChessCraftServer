@@ -1,4 +1,10 @@
-import {ChessPlayer, EnrichedPairing, EnrichedPlayer, Pairing, PairingPlayer} from "../Interfaces/Interfaces.js";
+import {
+  ChessPlayer,
+  EnrichedPairing,
+  EnrichedPlayer,
+  Pairing,
+  PairingPlayer,
+} from '../Interfaces/Interfaces.js';
 
 /**
  * Enrich the pairings data with additional player information
@@ -7,20 +13,20 @@ import {ChessPlayer, EnrichedPairing, EnrichedPlayer, Pairing, PairingPlayer} fr
  * @returns Enriched pairings with complete player information
  */
 export function enrichPairings(pairings: Pairing[], players: ChessPlayer[]): EnrichedPairing[] {
-    const playerMap = new Map<number, ChessPlayer>();
+  const playerMap = new Map<number, ChessPlayer>();
 
-    players.forEach(player => {
-        if (player.fideId !== null) {
-            playerMap.set(player.fideId, player);
-        }
-    });
+  players.forEach((player) => {
+    if (player.fideId !== null) {
+      playerMap.set(player.fideId, player);
+    }
+  });
 
-    return pairings.map(pairing => ({
-        white: enrichPlayer(pairing.white, playerMap),
-        black: enrichPlayer(pairing.black, playerMap),
-        result: pairing.result,
-        live: pairing.live
-    }));
+  return pairings.map((pairing) => ({
+    white: enrichPlayer(pairing.white, playerMap),
+    black: enrichPlayer(pairing.black, playerMap),
+    result: pairing.result,
+    live: pairing.live,
+  }));
 }
 
 /**
@@ -30,22 +36,22 @@ export function enrichPairings(pairings: Pairing[], players: ChessPlayer[]): Enr
  * @returns Enriched player with title, federation, and rating
  */
 function enrichPlayer(player: PairingPlayer, playerMap: Map<number, ChessPlayer>): EnrichedPlayer {
-    const dbPlayer = playerMap.get(player.fideid);
+  const dbPlayer = playerMap.get(player.fideid);
 
-    if (!dbPlayer) {
-        console.warn(`Player with FIDE ID ${player.fideid} not found in database`);
-        return {
-            ...player,
-            title: 'Unknown',
-            federation: 'Unknown',
-            rating: 0
-        };
-    }
-
+  if (!dbPlayer) {
+    console.warn(`Player with FIDE ID ${player.fideid} not found in database`);
     return {
-        ...player,
-        title: dbPlayer.title,
-        federation: dbPlayer.federation,
-        rating: dbPlayer.rating
+      ...player,
+      title: 'Unknown',
+      federation: 'Unknown',
+      rating: 0,
     };
+  }
+
+  return {
+    ...player,
+    title: dbPlayer.title,
+    federation: dbPlayer.federation,
+    rating: dbPlayer.rating,
+  };
 }

@@ -1,12 +1,12 @@
-import { Database } from "../database/database.js";
-import { WatchedGame } from "./pulling.service.js";
-import { fetchApiData } from "../utils/api-client.js";
-import { constructApiUrl } from "../utils/urls.js";
-import { SocketService } from "../socket/socket.service.js";
-import { SocketEvents } from "../socket/socket.events.js";
-import { IBoardMove, IGame } from "../schemas/schemas.interfaces.js";
-import { WatchedGameRepository } from "../repositories/watchedgame.repository.js";
-import { RoundRepository } from "../repositories/round.repository.js";
+import { Database } from '../database/database.js';
+import { WatchedGame } from './pulling.service.js';
+import { fetchApiData } from '../utils/api-client.js';
+import { constructApiUrl } from '../utils/urls.js';
+import { SocketService } from '../socket/socket.service.js';
+import { SocketEvents } from '../socket/socket.events.js';
+import { IBoardMove, IGame } from '../schemas/schemas.interfaces.js';
+import { WatchedGameRepository } from '../repositories/watchedgame.repository.js';
+import { RoundRepository } from '../repositories/round.repository.js';
 
 interface GameState {
   moveCount: number;
@@ -48,11 +48,7 @@ export class GamePollingService {
     this.processingGames.add(key);
 
     try {
-      const url = constructApiUrl(
-        game.id,
-        game.round.toString(),
-        game.game.toString(),
-      );
+      const url = constructApiUrl(game.id, game.round.toString(), game.game.toString());
       const result = await fetchApiData(url);
 
       if (!result.moves) {
@@ -101,10 +97,7 @@ export class GamePollingService {
         boardData.moves,
       );
 
-      await this.watchedGameRepository.appendMoves(
-        boardData.serialNr,
-        newMoves,
-      );
+      await this.watchedGameRepository.appendMoves(boardData.serialNr, newMoves);
       console.log(
         `Game ${key} — ${newMoves.length} new move(s) saved:`,
         newMoves.map((m) => m.notation),
@@ -122,10 +115,7 @@ export class GamePollingService {
 
     if (gameEnded) {
       //todo: mapiranje rezultata partije
-      await this.watchedGameRepository.closeGame(
-        boardData.serialNr,
-        boardData.result,
-      );
+      await this.watchedGameRepository.closeGame(boardData.serialNr, boardData.result);
       await this.updatePairingResult(key, boardData.result);
       console.log(`Game ${key} ended with result: ${boardData.result}`);
 
@@ -146,13 +136,8 @@ export class GamePollingService {
     });
   }
 
-  public async initializeGame(
-    key: string,
-    boardData: BoardResponse,
-  ): Promise<void> {
-    const existingGame = await this.watchedGameRepository.findBySerialNr(
-      boardData.serialNr,
-    );
+  public async initializeGame(key: string, boardData: BoardResponse): Promise<void> {
+    const existingGame = await this.watchedGameRepository.findBySerialNr(boardData.serialNr);
 
     if (existingGame) {
       // Game already in DB — resume from stored state
@@ -160,24 +145,17 @@ export class GamePollingService {
         moveCount: existingGame.moveCount,
         live: existingGame.live,
       });
-      console.log(
-        `Game ${key} resumed from DB with ${existingGame.moveCount} moves`,
-      );
+      console.log(`Game ${key} resumed from DB with ${existingGame.moveCount} moves`);
     } else {
       // Brand new game — create document
       const receivedAt = new Date();
-      const moves = this.parseMoves(
-        boardData.moves,
-        0,
-        receivedAt,
-        boardData.moves,
-      );
+      const moves = this.parseMoves(boardData.moves, 0, receivedAt, boardData.moves);
 
       await this.watchedGameRepository.createGame({
         gameKey: key,
         serialNr: boardData.serialNr,
         live: boardData.live,
-        result: boardData.result as IGame["result"],
+        result: boardData.result as IGame['result'],
         firstMove: new Date(boardData.firstMove),
         delayMs: 0,
         moveCount: moves.length,
@@ -207,13 +185,12 @@ export class GamePollingService {
   ): IBoardMove[] {
     return rawMoves.map((raw, index) => {
       const globalIndex = offset + index;
-      const parts = raw.split(" ");
+      const parts = raw.split(' ');
       const notation = parts[0];
-      const [clockStr, incrementStr] = parts[1].split("+");
+      const [clockStr, incrementStr] = parts[1].split('+');
       const clock = parseInt(clockStr);
       const increment = parseInt(incrementStr);
-      const color: "white" | "black" =
-        globalIndex % 2 === 0 ? "white" : "black";
+      const color: 'white' | 'black' = globalIndex % 2 === 0 ? 'white' : 'black';
       const moveNumber = Math.floor(globalIndex / 2) + 1;
       const playedAt = this.estimatePlayedAt(globalIndex, allMoves, receivedAt);
 
@@ -229,47 +206,32 @@ export class GamePollingService {
     });
   }
 
-  private async updatePairingResult(
-    gameKey: string,
-    result: string,
-  ): Promise<void> {
+  private async updatePairingResult(gameKey: string, result: string): Promise<void> {
     try {
       // gameKey format is tournamentId-round-gameNumber
       // split from the right to handle UUIDs which contain dashes
-      const parts = gameKey.split("-");
+      const parts = gameKey.split('-');
       const gameNumber = parts[parts.length - 1];
       const round = parts[parts.length - 2];
-      const tournamentId = parts.slice(0, parts.length - 2).join("-");
+      const tournamentId = parts.slice(0, parts.length - 2).join('-');
 
-      await this.roundRepository.updatePairingResult(
-        tournamentId,
-        round,
-        gameKey,
-        result,
-      );
+      await this.roundRepository.updatePairingResult(tournamentId, round, gameKey, result);
 
       console.log(`Pairing updated for game ${gameKey} with result: ${result}`);
     } catch (error: any) {
-      console.error(
-        `Failed to update pairing result for game ${gameKey}:`,
-        error.message,
-      );
+      console.error(`Failed to update pairing result for game ${gameKey}:`, error.message);
     }
   }
 
-  public estimatePlayedAt(
-    globalIndex: number,
-    allMoves: string[],
-    receivedAt: Date,
-  ): Date | null {
+  public estimatePlayedAt(globalIndex: number, allMoves: string[], receivedAt: Date): Date | null {
     if (globalIndex === 0) return null;
 
     try {
-      const currentParts = allMoves[globalIndex].split(" ");
-      const previousParts = allMoves[globalIndex - 1].split(" ");
-      const currentClock = parseInt(currentParts[1].split("+")[0]);
-      const previousClock = parseInt(previousParts[1].split("+")[0]);
-      const increment = parseInt(currentParts[1].split("+")[1]);
+      const currentParts = allMoves[globalIndex].split(' ');
+      const previousParts = allMoves[globalIndex - 1].split(' ');
+      const currentClock = parseInt(currentParts[1].split('+')[0]);
+      const previousClock = parseInt(previousParts[1].split('+')[0]);
+      const increment = parseInt(currentParts[1].split('+')[1]);
       const timeSpentMs = previousClock - currentClock + increment;
 
       return new Date(receivedAt.getTime() - timeSpentMs);
@@ -281,7 +243,7 @@ export class GamePollingService {
   public clearStates(): void {
     this.gameStates.clear();
     this.processingGames.clear();
-    console.log("GamePollingService states cleared");
+    console.log('GamePollingService states cleared');
   }
 
   public buildKey(game: WatchedGame): string {

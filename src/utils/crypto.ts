@@ -9,14 +9,14 @@ const secretKey: string = 'your-secret-key'; // Move to environment variable for
  * @throws Error if decoding fails
  */
 function decodeTournamentId(encodedId: string): string {
-    const cleanedId: string = cleanString(encodedId);
-    const tournamentId: string = reverseString(cleanedId);
+  const cleanedId: string = cleanString(encodedId);
+  const tournamentId: string = reverseString(cleanedId);
 
-    if (!tournamentId) {
-        throw new Error('Failed to decode the tournament ID');
-    }
+  if (!tournamentId) {
+    throw new Error('Failed to decode the tournament ID');
+  }
 
-    return tournamentId;
+  return tournamentId;
 }
 
 /**
@@ -25,7 +25,7 @@ function decodeTournamentId(encodedId: string): string {
  * @returns The encrypted data as a string
  */
 function encryptData(data: any): string {
-    return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
+  return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
 }
 
 /**
@@ -34,7 +34,10 @@ function encryptData(data: any): string {
  * @returns The cleaned string
  */
 function cleanString(input: string): string {
-    return input.split('-').map(segment => segment.slice(0, -1)).join('-');
+  return input
+    .split('-')
+    .map((segment) => segment.slice(0, -1))
+    .join('-');
 }
 
 /**
@@ -43,10 +46,7 @@ function cleanString(input: string): string {
  * @returns The reversed string
  */
 function reverseString(str: string): string {
-    return str.split('').reverse().join('');
+  return str.split('').reverse().join('');
 }
 
-export {
-    decodeTournamentId,
-    encryptData,
-};
+export { decodeTournamentId, encryptData };
