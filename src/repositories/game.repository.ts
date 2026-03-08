@@ -1,5 +1,6 @@
 import { Database } from '../database/database.js';
 import { DelayedResult } from '../Interfaces/Interfaces.js';
+import { collections } from '../utils/constants.js';
 
 export class GameRepository {
   private db: Database;
@@ -10,7 +11,7 @@ export class GameRepository {
 
   async getDelayedResults(fifteenMinutesAgo: number): Promise<DelayedResult[]> {
     return await this.db.find({
-      collection: 'DelayedResult',
+      collection: collections.DELAYED_RESULT,
       query: { gameCompletedAt: { $lt: fifteenMinutesAgo } },
       project: {
         whitePlayerId: 1,
@@ -22,7 +23,7 @@ export class GameRepository {
     const whitePlayerIds = records.map((record) => record.whitePlayerId);
 
     const existingRecords = await this.db.find({
-      collection: 'DelayedResult',
+      collection: collections.DELAYED_RESULT,
       query: { whitePlayerId: { $in: whitePlayerIds } },
       project: {
         whitePlayerId: 1,
@@ -47,7 +48,7 @@ export class GameRepository {
 
     if (recordsToInsert.length > 0) {
       await this.db.insertMany({
-        collection: 'DelayedResult',
+        collection: collections.DELAYED_RESULT,
         documents: formattedGames,
       });
       return recordsToInsert;

@@ -1,5 +1,6 @@
 import { Database } from '../database/database.js';
 import { IGame, IBoardMove } from '../schemas/schemas.interfaces.js';
+import { collections } from '../utils/constants.js';
 
 export class WatchedGameRepository {
   private db: Database;
@@ -10,21 +11,21 @@ export class WatchedGameRepository {
 
   async findBySerialNr(serialNr: string): Promise<IGame | null> {
     return await this.db.findOne({
-      collection: 'Game',
+      collection: collections.GAME,
       query: { serialNr },
     });
   }
 
   async createGame(document: Partial<IGame>): Promise<IGame> {
     return await this.db.insertOne({
-      collection: 'Game',
+      collection: collections.GAME,
       document,
     });
   }
 
   async appendMoves(serialNr: string, moves: IBoardMove[]): Promise<void> {
     await this.db.updateOne({
-      collection: 'Game',
+      collection: collections.GAME,
       query: { serialNr },
       update: {
         $push: { moves: { $each: moves } },
@@ -35,7 +36,7 @@ export class WatchedGameRepository {
 
   async closeGame(serialNr: string, result: string): Promise<void> {
     await this.db.updateOne({
-      collection: 'Game',
+      collection: collections.GAME,
       query: { serialNr },
       update: {
         $set: { live: false, result },
@@ -45,7 +46,7 @@ export class WatchedGameRepository {
 
   async findLiveGames(): Promise<IGame[]> {
     return await this.db.find({
-      collection: 'Game',
+      collection: collections.GAME,
       query: { live: true },
     });
   }

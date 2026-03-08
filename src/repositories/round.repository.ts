@@ -1,5 +1,6 @@
 import { Database } from '../database/database.js';
-import { IRound, IPairing } from '../schemas/schemas.interfaces.js';
+import { IRound } from '../schemas/schemas.interfaces.js';
+import { collections } from '../utils/constants.js';
 
 export class RoundRepository {
   private db: Database;
@@ -10,14 +11,14 @@ export class RoundRepository {
 
   async findByTournamentAndRound(tournamentId: string, round: string): Promise<IRound | null> {
     return await this.db.findOne({
-      collection: 'Round',
+      collection: collections.ROUND,
       query: { tournamentId, round },
     });
   }
 
   async createRound(document: Partial<IRound>): Promise<IRound> {
     return await this.db.insertOne({
-      collection: 'Round',
+      collection: collections.ROUND,
       document,
     });
   }
@@ -29,7 +30,7 @@ export class RoundRepository {
     result: string,
   ): Promise<void> {
     await this.db.updateOne({
-      collection: 'Round',
+      collection: collections.ROUND,
       query: { tournamentId, round },
       update: {
         $set: {
@@ -48,7 +49,7 @@ export class RoundRepository {
     live: boolean,
   ): Promise<void> {
     await this.db.updateOne({
-      collection: 'Round',
+      collection: collections.ROUND,
       query: { tournamentId, round },
       update: {
         $set: {
@@ -61,14 +62,14 @@ export class RoundRepository {
 
   async findByGameKey(gameKey: string): Promise<IRound | null> {
     return await this.db.findOne({
-      collection: 'Round',
+      collection: collections.ROUND,
       query: { 'pairings.gameKey': gameKey },
     });
   }
 
   async findLiveRounds(tournamentId: string): Promise<IRound[]> {
     return await this.db.find({
-      collection: 'Round',
+      collection: collections.ROUND,
       query: { tournamentId, 'pairings.live': true },
     });
   }
