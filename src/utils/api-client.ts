@@ -16,7 +16,7 @@ async function fetchApiData<T = any>(url: string): Promise<T> {
   } catch (error) {
     const axiosError = error as AxiosError;
     const status = axiosError.response?.status || 500;
-    throw new Error(`Error fetching data from ${url}, status: ${status}`);
+    throw new Error(`Error fetching data from ${url}, status: ${status}`, { cause: error });
   }
 }
 

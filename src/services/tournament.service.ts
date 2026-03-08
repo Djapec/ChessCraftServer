@@ -4,11 +4,9 @@ import { ChessFileRequest, ChessPlayer, Result, Tournament } from '../Interfaces
 import { TournamentRepository } from '../repositories/tournament.repository.js';
 
 export class TournamentService {
-  private db: Database;
   private tournamentRepository: TournamentRepository;
 
   constructor(db: Database) {
-    this.db = db;
     this.tournamentRepository = new TournamentRepository(db);
   }
 

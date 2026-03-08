@@ -1,24 +1,32 @@
 import { Request, Response } from 'express';
 import { sendResponse } from '../utils/api-client.js';
-import { ProxyService } from '../services/proxy.service.js';
+import { RoundService } from '../services/round.service.js';
 import { Database } from '../database/database.js';
 import { ProxyQueryParams } from '../Interfaces/Interfaces.js';
 
-export class ProxyController {
-  private proxyService: ProxyService;
+export class RoundController {
+  private proxyService: RoundService;
 
   constructor(db: Database) {
-    this.proxyService = new ProxyService(db);
+    this.proxyService = new RoundService(db);
   }
 
-  proxyHandler = async (
+  fetchRound = async (
     request: Request<object, object, object, ProxyQueryParams>,
     response: Response,
   ) => {
     try {
-      const { id: encodedId, round, game } = request.query;
-      const result = await this.proxyService.proxyHandler(encodedId, round, game);
-      sendResponse(response, result);
+      const { id: encodedId, round } = request.query;
+      // todo: add api validator
+      if (encodedId && round) {
+        const result = await this.proxyService.fetchRound(encodedId, round);
+        sendResponse(response, result);
+      } else {
+        return response.status(400).json({
+          status: 400,
+          message: 'Missing required parameters',
+        });
+      }
     } catch (error: any) {
       console.error('Error in proxy handler:', error.message);
       response.status(500).json({

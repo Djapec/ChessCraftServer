@@ -1,5 +1,5 @@
-import { Database } from '../database/database.js';
-import { RoundPollingService } from './round.polling.service.js';
+import { Database } from '../../database/database.js';
+import { RoundPollingService } from '../pullers/round.polling.service.js';
 
 export interface WatchedRound {
   id: string;

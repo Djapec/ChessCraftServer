@@ -1,5 +1,5 @@
 import express from 'express';
-import type { Application, Request, Response, NextFunction } from 'express';
+import type { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
@@ -9,7 +9,7 @@ import { Database } from './database/database.js';
 import { getSchemas } from './schemas/index.js';
 import { createTestRoutes } from './routes/test.route.js';
 import { createTournamentRoutes } from './routes/tournament.route.js';
-import { createProxyRoutes } from './routes/proxy.route.js';
+import { createRoundRoutes } from './routes/proxy.route.js';
 import { createGameRoutes } from './routes/game.route.js';
 import { midnightTruncateCron } from './cron/midnightTruncateCron.js';
 
@@ -39,20 +39,20 @@ app.use(express.urlencoded({ extended: true }));
 // API controllers
 const testRoutes = createTestRoutes();
 const tournamentRoutes = createTournamentRoutes(db);
-const proxyRoutes = createProxyRoutes(db);
+const roundRoutes = createRoundRoutes(db);
 const gameRoutes = createGameRoutes(db);
 
 // API routes
 app.use('/api/test', testRoutes);
-app.use('/api/process-chess-data', tournamentRoutes);
-app.use('/api/proxy', proxyRoutes);
-app.use('/api/proxy/game', gameRoutes);
+app.use('/api/tournament', tournamentRoutes);
+app.use('/api/round', roundRoutes);
+app.use('/api/game', gameRoutes);
 
 app.use((req: Request, res: Response) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response) => {
   console.error(err.stack);
   res.status(500).json({
     message: 'Internal Server Error',

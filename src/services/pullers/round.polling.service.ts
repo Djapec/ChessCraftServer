@@ -1,9 +1,9 @@
-import { Database } from '../database/database.js';
-import { WatchedRound, RoundWatcherService } from './round.watcher.service.js';
-import { RoundRepository } from '../repositories/round.repository.js';
-import { fetchApiData } from '../utils/api-client.js';
-import { constructApiUrl } from '../utils/urls.js';
-import { IPairing } from '../schemas/schemas.interfaces.js';
+import { Database } from '../../database/database.js';
+import { WatchedRound, RoundWatcherService } from '../watchers/round.watcher.service.js';
+import { RoundRepository } from '../../repositories/round.repository.js';
+import { fetchApiData } from '../../utils/api-client.js';
+import { constructApiUrl } from '../../utils/urls.js';
+import { IPairing } from '../../schemas/schemas.interfaces.js';
 
 interface RoundState {
   totalPairings: number;

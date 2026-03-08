@@ -1,13 +1,13 @@
-import { Database } from '../database/database.js';
-import { WatchedGame } from './pulling.service.js';
-import { fetchApiData } from '../utils/api-client.js';
-import { constructApiUrl } from '../utils/urls.js';
-import { SocketService } from '../socket/socket.service.js';
-import { SocketEvents } from '../socket/socket.events.js';
-import { IBoardMove, IGame } from '../schemas/schemas.interfaces.js';
-import { WatchedGameRepository } from '../repositories/watchedgame.repository.js';
-import { RoundRepository } from '../repositories/round.repository.js';
-import { gameResultMap } from '../utils/constants.js';
+import { Database } from '../../database/database.js';
+import { WatchedGame } from '../watchers/game.watcher.service.js';
+import { fetchApiData } from '../../utils/api-client.js';
+import { constructApiUrl } from '../../utils/urls.js';
+import { SocketService } from '../../socket/socket.service.js';
+import { SocketEvents } from '../../socket/socket.events.js';
+import { IBoardMove, IGame } from '../../schemas/schemas.interfaces.js';
+import { WatchedGameRepository } from '../../repositories/watchedgame.repository.js';
+import { RoundRepository } from '../../repositories/round.repository.js';
+import { gameResultMap } from '../../utils/constants.js';
 
 interface GameState {
   moveCount: number;

@@ -17,15 +17,17 @@ export class GameController {
   ) => {
     try {
       const { id: encodedId, round, game } = request.query;
-      if (!encodedId || !round || !game) {
+      // todo: add api validator
+      if (encodedId && round && game) {
+        const result = await this.gameService.fetchGame(encodedId, round, game);
+        sendResponse(response, result);
+      } else {
         return response.status(400).json({
           status: 400,
           message: 'Missing required parameters',
         });
       }
-
-      const result = await this.gameService.fetchGame(encodedId!, round!, game!);
-      sendResponse(response, result);
+      // todo: add custom error type
     } catch (error: any) {
       console.error('Error in game fetching:', error.message);
       response.status(500).json({

@@ -1,12 +1,12 @@
 import express from 'express';
-import { ProxyController } from '../controllers/proxy.controller.js';
+import { RoundController } from '../controllers/round.controller.js';
 import { Database } from '../database/database.js';
 
-export function createProxyRoutes(db: Database) {
+export function createRoundRoutes(db: Database) {
   const router = express.Router();
-  const proxyController = new ProxyController(db);
+  const roundController = new RoundController(db);
 
-  router.get('/', proxyController.proxyHandler);
+  router.get('/', roundController.fetchRound);
 
   return router;
 }

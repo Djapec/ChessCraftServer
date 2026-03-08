@@ -1,5 +1,5 @@
-import { Database } from '../database/database.js';
-import { GamePollingService } from './game.pulling.service.js';
+import { Database } from '../../database/database.js';
+import { GamePollingService } from '../pullers/game.pulling.service.js';
 
 export interface WatchedGame {
   id: string;
@@ -7,8 +7,8 @@ export interface WatchedGame {
   game: string;
 }
 
-export class PollingService {
-  private static instance: PollingService;
+export class GameWatcherService {
+  private static instance: GameWatcherService;
   private gamePollingService: GamePollingService;
   private watchedGames: Map<string, WatchedGame>;
   private intervalId: NodeJS.Timeout | null;
@@ -20,20 +20,20 @@ export class PollingService {
     this.intervalId = null;
   }
 
-  public static initialize(db: Database): PollingService {
-    if (!PollingService.instance) {
-      PollingService.instance = new PollingService(db);
+  public static initialize(db: Database): GameWatcherService {
+    if (!GameWatcherService.instance) {
+      GameWatcherService.instance = new GameWatcherService(db);
     }
-    return PollingService.instance;
+    return GameWatcherService.instance;
   }
 
-  public static getInstance(): PollingService {
-    if (!PollingService.instance) {
+  public static getInstance(): GameWatcherService {
+    if (!GameWatcherService.instance) {
       throw new Error(
         'PollingService has not been initialized. Call PollingService.initialize() first.',
       );
     }
-    return PollingService.instance;
+    return GameWatcherService.instance;
   }
 
   // Called when Vue sends an updated list of watched games

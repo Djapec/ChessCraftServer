@@ -13,7 +13,8 @@ export function createTournamentRoutes(db: Database) {
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   });
 
-  router.post('/', upload.single('file'), tournamentController.saveTournament);
+  router.get('/', tournamentController.fetchTournament);
+  router.post('/process-chess-data', upload.single('file'), tournamentController.saveTournament);
 
   return router;
 }
