@@ -17,16 +17,8 @@ export class RoundController {
   ) => {
     try {
       const { id: encodedId, round } = request.query;
-      // todo: add api validator
-      if (encodedId && round) {
-        const result = await this.proxyService.fetchRound(encodedId, round);
-        sendResponse(response, result);
-      } else {
-        return response.status(400).json({
-          status: 400,
-          message: 'Missing required parameters',
-        });
-      }
+      const result = await this.proxyService.fetchRound(encodedId!, round!);
+      sendResponse(response, result);
     } catch (error: any) {
       console.error('Error in proxy handler:', error.message);
       response.status(500).json({

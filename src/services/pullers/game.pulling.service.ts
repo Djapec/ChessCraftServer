@@ -197,7 +197,7 @@ export class GamePollingService {
       const notation = parts[0];
       const [clockStr, incrementStr] = parts[1].split('+');
       const clock = parseInt(clockStr);
-      const increment = parseInt(incrementStr);
+      const increment = incrementStr ? parseInt(incrementStr) : 0;
       const color: 'white' | 'black' = globalIndex % 2 === 0 ? 'white' : 'black';
       const moveNumber = Math.floor(globalIndex / 2) + 1;
       const playedAt = this.estimatePlayedAt(globalIndex, allMoves, receivedAt);
@@ -239,8 +239,10 @@ export class GamePollingService {
       const previousParts = allMoves[globalIndex - 1].split(' ');
       const currentClock = parseInt(currentParts[1].split('+')[0]);
       const previousClock = parseInt(previousParts[1].split('+')[0]);
-      const increment = parseInt(currentParts[1].split('+')[1]);
+      const increment = parseInt(currentParts[1].split('+')[1] ?? '0');
       const timeSpentMs = previousClock - currentClock + increment;
+
+      if (isNaN(timeSpentMs)) return null;
 
       return new Date(receivedAt.getTime() - timeSpentMs);
     } catch {

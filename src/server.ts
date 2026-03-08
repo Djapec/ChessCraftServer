@@ -9,7 +9,7 @@ import { Database } from './database/database.js';
 import { getSchemas } from './schemas/index.js';
 import { createTestRoutes } from './routes/test.route.js';
 import { createTournamentRoutes } from './routes/tournament.route.js';
-import { createRoundRoutes } from './routes/proxy.route.js';
+import { createRoundRoutes } from './routes/round.route.js';
 import { createGameRoutes } from './routes/game.route.js';
 import { midnightTruncateCron } from './cron/midnightTruncateCron.js';
 
