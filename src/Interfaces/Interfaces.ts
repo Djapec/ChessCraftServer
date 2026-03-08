@@ -4,6 +4,7 @@ export interface Result {
     code: number;
     message: string;
     data?: any;
+    error: boolean;
 }
 
 export interface ChessFileRequest extends express.Request {

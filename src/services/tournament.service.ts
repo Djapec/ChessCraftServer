@@ -15,6 +15,7 @@ export class TournamentService {
     async saveTournament(request: ChessFileRequest): Promise<Result> {
         if (!request.file) {
             return {
+                error: true,
                 code: 400,
                 message: 'No file uploaded.'
             }
@@ -22,6 +23,7 @@ export class TournamentService {
 
         if (!request.body.chessResultId) {
             return {
+                error: true,
                 code: 400,
                 message: 'Chess result ID is required.'
             }
@@ -41,6 +43,7 @@ export class TournamentService {
 
         if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
             return {
+                error: true,
                 code: 400,
                 message: 'Excel file contains no sheets.'
             }
@@ -61,6 +64,7 @@ export class TournamentService {
         await this.tournamentRepository.saveTournament(tournament);
 
         return {
+            error: false,
             code: 200,
             message: 'Tournament saved successfully.',
             data: {

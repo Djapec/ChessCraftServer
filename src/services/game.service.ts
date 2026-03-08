@@ -89,6 +89,7 @@ export class GameService {
              //const encryptedData = encryptData(result);
 
              return {
+                 error: false,
                  code: 200,
                  message: 'Data fetched successfully.',
                  data: result
@@ -96,6 +97,7 @@ export class GameService {
 
          } catch (error: any) {
              return {
+                 error: true,
                  code: 500,
                  message: `There was an issue with fetching game. ${error.message}`,
              }
